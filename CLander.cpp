@@ -287,12 +287,43 @@ bool CLander::TestForImpact(vector<SPoint> &ship)
 //	from the pad, what speed it's travelling when it reaches ground
 //	level and its angle at touchdown.
 //-------------------------------------------------------------------
+void CLander::CalculateFitness()
+{
+	double DistFromPad = fabs(m_vPadPos.x - m_vPos.x);
 
+	double distFit = m_cxClient - DistFromPad;
+
+	double speed = sqrt((m_vVelocity.x * m_vVelocity.x) + (m_vVelocity.y * m_vVelocity.y));
+
+	double rotFit = 1 / (fabs(m_dRotation) + 1);
+
+	double fitAirTime = (double)m_cTick / (speed + 1);
+
+	m_dFitness = distFit + 400 * rotFit + 4 * fitAirTime;
+
+	if ((DistFromPad < DIST_TOLERANCE) &&
+		(speed < SPEED_TOLERANCE) &&
+		(fabs(m_dRotation) < ROTATION_TOLERANCE))
+	{
+		m_dFitness = BIG_NUMBER;
+	}
+}
 
 //----------------------------- Decode() ---------------------------------
 //  takes a genome an decodes it into its sequence of actions
 //------------------------------------------------------------------------
+void CLander::Decode(const vector<SGene> &actions)
+{
+	m_vecActions.clear();
 
+	for (int i = 0; i < actions.size(); ++i)
+	{
+		for (int j = 0; j < actions[i].duration; ++j)
+		{
+			m_vecActions.push_back(actions[i].action);
+		}
+	}
+}
 //------------------------- Render ---------------------------------------
 //
 //------------------------------------------------------------------------

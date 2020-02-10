@@ -66,17 +66,27 @@
 //--------------------------------------------------------------------
 //	defines used in the genetic algorithm
 //--------------------------------------------------------------------
+#define POP_SIZE	100
+#define CHROMO_LENGTH 30
+
+#define MUTATION_RATE 0.01
+#define CROSSOVER_RATE 0.7
 
 //used for elitism
+#define NUM_ELITE 4
+#define NUM_COPIES_ELITE 1
 
 //this is the maximum amount of time the duration
 //of an action can be altered by the mutation operator
+#define MAX_MUTATION_DURATION MAX_ACTION_DURATION /2
 
 //number of genomes to randomly choose and compare in
 //standard tournament selection
+#define NUM_TO_COMPARE 5
 
 //maximum amount of generations the ga is allowed to run before
 //restarting
+#define MAX_GENERATIONS_ALLOWED 500
 
 
 #endif

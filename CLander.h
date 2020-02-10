@@ -24,21 +24,35 @@
 using namespace std;
 
 //enumerate a type for each different action the Lander can perform
-
+enum action_type {rotate_left,
+				  rotate_right,
+				  thrust,
+				  non};
 //-------------------------------------------------------------------
 
 struct SGene 
 {
 	
+	action_type action;
+
 	//duration the action is applied measured in ticks
-	
+	int duration;
+
 	SGene()
 	{
 		//create a random move
+		action = (action_type)RandInt(0, 3);
+
+		duration = RandInt(1, MAX_ACTION_DURATION);
 	}
 	
+	SGene(action_type a, int d):action(a), duration(d){}
 	//need to overload the == operator so we can test if actions are 
 	//equal (used in the crossover process of the GA)
+	bool operator==(const SGene &rhs) const
+	{
+		return(action == rhs.action) && (duration == rhs.duration);
+	}
 
 };
 

@@ -15,7 +15,7 @@ void CgaLander::CreateStartPopulation()
 	m_iGeneration = 0;
 	m_iFittestGenome = 0;
 	m_dBestFitness = 0;
-	m_TotalFitness = 0;
+	m_dTotalFitness = 0;
 }
 
 //-------------------------GrabNBest----------------------------------
@@ -23,19 +23,68 @@ void CgaLander::CreateStartPopulation()
 //	This works like an advanced form of elitism by inserting NumCopies
 //  copies of the NBest most fittest genomes into a population vector
 //--------------------------------------------------------------------
-
+void CgaLander::GrabNBest(int NBest,
+	const int NumCopies,
+	vector<SGenome>&vecPop)
+{
+	while (NBest--)
+	{
+		for (int i = 0; i < NumCopies; ++i)
+		{
+			vecPop.push_back(m_vecPop[(m_iPopSize - 1) - NBest]);
+		}
+	}
+}
 
 //--------------------------RouletteWheelSelection-----------------
 //
 //	selects a member of the population by using roulette wheel 
 //	selection as described in the text.
 //------------------------------------------------------------------
+SGenome& CgaLander::RouletteWheelSelection()
+{
+	double fSlice = RandFloat() * m_dTotalFitness;
 
+	double cfTotal = 0.0;
+
+	int selectedGenome = 0;
+
+	for (int i = 0; i < m_iPopSize; ++i)
+	{
+		cfTotal += m_vecPop[i].dFitness;
+
+		if (cfTotal > fSlice)
+		{
+			selectedGenome = i;
+
+			break;
+		}
+	}
+
+	return m_vecPop[selectedGenome];
+}
 
 //----------------------------Mutate---------------------------------
 //
 //--------------------------------------------------------------------
+void CgaLander::Mutate(vector<SGene> &vecActions)
+{
 
+	for (int gene = 0; gene < vecActions.size(); ++gene)
+	{
+		if (RandFloat() < m_dMutationRate)
+		{
+			vecActions[gene].action = (action_type)RandInt(0, 3);
+		}
+
+		if (RandFloat() < m_dMutationRate / 2)
+		{
+			vecActions[gene].duration += RandomClamped() * MAX_MUTATION_DURATION;
+
+			Clamp(vecActions[gene].duration, 0, MAX_ACTION_DURATION);
+		}
+	}
+}
 
 
 //--------------------------- CrossoverMulti -----------------------------
@@ -45,7 +94,36 @@ void CgaLander::CreateStartPopulation()
 //  a swap rate and iterate through each chromosome swap over individual
 //  genes where appropriate. 
 //-------------------------------------------------------------------------
+void CgaLander::CrossoverMulti(const vector<SGene> &mum,
+							   const vector<SGene> &dad,
+									 vector<SGene> &baby1,
+									 vector<SGene> &baby2)
+{
+	if ((RandFloat() > m_dCrossoverRate) ||
+		(mum == dad))
+	{
+		baby1 = mum;
+		baby2 = dad;
 
+		return;
+	}
+
+	float SwapRate = RandFloat() * CHROMO_LENGTH;
+
+	for (int gene = 0; gene < mum.size(); ++gene)
+	{
+		if (RandFloat() < SwapRate)
+		{
+			baby1.push_back(dad[gene]);
+			baby2.push_back(mum[gene]);
+		}
+		else
+		{
+			baby1.push_back(mum[gene]);
+			baby2.push_back(dad[gene]);
+		}
+	}
+}
 
 //------------------------------ UpdatePop -----------------------------
 //

@@ -28,7 +28,26 @@ using namespace std;
 //--------------------------------------------------------------
 //	define our genome structure
 //--------------------------------------------------------------
+struct SGenome
+{
+	vector<SGene> vecActions;
 
+	double dFitness;
+
+	SGenome() : dFitness(0) {}
+	SGenome(const int num_actions) : dFitness(0)
+	{
+		for (int i = 0; i < num_actions; ++i)
+		{
+			vecActions.push_back(SGene());
+		}
+	}
+
+	friend bool operator<(const SGenome& lhs, const SGenome& rhs)
+	{
+		return (lhs.dFitness < rhs.dFitness);
+	}
+};
 //--------------------------------------------------------------
 //	define our genetic algorithm class
 //---------------------------------------------------------------
@@ -37,10 +56,22 @@ class CgaLander
 private:
 
 	//our population of genomes
-	
+	vector<SGenome>m_vecPop;
+
 	//size of population
-	
+	int m_iPopSize;
+
+	double m_dCrossoverRate;
+
+	double m_dMutationRate;
 	//how many actions per chromosome
+	int m_iChromoLength;
+
+	int m_iFittestGenome;
+
+	double m_dBestFitness, m_dAverageFitness, m_dWorstFitness, m_dTotalFitness;
+
+	int m_iGeneration;
 
 	
 	void			      Mutate(vector<SGene> &vecBits);
