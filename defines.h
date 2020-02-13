@@ -69,7 +69,7 @@
 #define POP_SIZE	100
 #define CHROMO_LENGTH 30
 
-#define MUTATION_RATE 0.01
+#define MUTATION_RATE 0.05
 #define CROSSOVER_RATE 0.0
 
 //used for elitism
