@@ -70,7 +70,7 @@
 #define CHROMO_LENGTH 30
 
 #define MUTATION_RATE 0.01
-#define CROSSOVER_RATE 0.7
+#define CROSSOVER_RATE 0.0
 
 //used for elitism
 #define NUM_ELITE 4
